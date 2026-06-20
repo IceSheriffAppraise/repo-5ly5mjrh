@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Food Kitchen
 
-## Getting Started
+Сайт доставки готового питания с калькулятором рациона и админкой.
+Стек: **Next.js (App Router) + TypeScript + Tailwind + Supabase**.
 
-First, run the development server:
+Supabase — единственный источник данных: программы, блюда, меню, длительности,
+скидки, формулы цены и заявки хранятся в базе, ничего не захардкожено в интерфейсе.
+
+## Возможности
+
+- Публичный сайт: главный экран, калькулятор питания, меню на день, оформление заявки, адаптив.
+- Калькулятор: программы ФИТ / ХИТ / ПРО, дата первой доставки, калорийность,
+  длительности 2 / 4 / 6 / 14 / 30 дней (из БД), плашка «Рассрочка» на 30 дней,
+  переключатель «Без рыбы», формат заказа «Разовый / Подписка».
+- Админка (`/admin/*`): меню, программы, калькулятор (тарифы), доставка, заявки, тексты.
+- Загрузка фото блюд в Supabase Storage (`dish-images`).
+
+## Локальный запуск
 
 ```bash
+npm install
+supabase start            # поднимает локальный Supabase (нужен Docker)
+supabase migration up     # применяет миграции (если ещё не применены)
+cp .env.example .env.local # подставьте значения из `supabase status`
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте http://localhost:3000 (сайт) и http://localhost:3000/admin (админка).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Проверки
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run typecheck
+npm run lint
+npm run build
+```
 
-## Learn More
+## Структура
 
-To learn more about Next.js, take a look at the following resources:
+- `src/app` — страницы и API-роуты (App Router).
+- `src/components` — UI-компоненты (калькулятор, меню, шапка).
+- `src/lib` — клиент Supabase, типы, доступ к данным, расчёт цены.
+- `supabase/migrations` — схема БД, RLS-политики, seed-данные, Storage-бакет.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`/api/config`, `/api/menu`, `/api/programs`, `/api/meal-plans`, `/api/delivery-rules`,
+`/api/pricing-rules`, `/api/orders`, `/api/upload/dish-image`, `/api/admin/[resource]`.
